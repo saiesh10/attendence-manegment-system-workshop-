@@ -7,6 +7,7 @@ const authenticateTeacher = require('../middleware/auth');
 
 const router = express.Router();
 const qrExpirySeconds = Number(process.env.QR_EXPIRY_SECONDS || 60);
+const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 router.use(authenticateTeacher);
 
@@ -25,7 +26,7 @@ router.post(
     const { subject, section } = req.body;
     const qrToken = uuidv4();
     const tokenExpiresAt = new Date(Date.now() + qrExpirySeconds * 1000);
-    const scanUrl = `http://localhost:3000/scan/${qrToken}`;
+    const scanUrl = `${frontendUrl}/scan/${qrToken}`;
 
     try {
       const session = await prisma.session.create({
@@ -65,7 +66,7 @@ router.post(
     const { id } = req.params;
     const qrToken = uuidv4();
     const tokenExpiresAt = new Date(Date.now() + qrExpirySeconds * 1000);
-    const scanUrl = `http://localhost:3000/scan/${qrToken}`;
+    const scanUrl = `${frontendUrl}/scan/${qrToken}`;
 
     try {
       const session = await prisma.session.findUnique({ where: { id } });
